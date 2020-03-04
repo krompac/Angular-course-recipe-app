@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import {RouterModule} from '@angular/router';
-import {IngredientResolverService} from './shopping-list/ingredient-resolver.service';
 import {HttpClientModule} from '@angular/common/http';
 import { AlertComponent } from './shared/alert/alert.component';
 import {SharedModule} from './shared/shared.module';
@@ -26,7 +25,7 @@ import {shoppingListReducer} from './shopping-list/store/shopping-list.reducer';
     SharedModule,
     StoreModule.forRoot({shoppingList: shoppingListReducer})
   ],
-  providers: [IngredientResolverService, LoggingService],
+  providers: [LoggingService],
   bootstrap: [AppComponent],
   entryComponents: [
     AlertComponent
