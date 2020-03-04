@@ -1,16 +1,17 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 
-import { AppComponent } from './app.component';
-import { HeaderComponent } from './header/header.component';
+import {AppComponent} from './app.component';
+import {HeaderComponent} from './header/header.component';
 import {RouterModule} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
-import { AlertComponent } from './shared/alert/alert.component';
+import {AlertComponent} from './shared/alert/alert.component';
 import {SharedModule} from './shared/shared.module';
 import {AppRoutingModule} from './app-routing.module';
 import {LoggingService} from './logging.service';
 import {StoreModule} from '@ngrx/store';
-import {shoppingListReducer} from './shopping-list/store/shopping-list.reducer';
+
+import * as fromApp from './store/app.reducer';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,7 @@ import {shoppingListReducer} from './shopping-list/store/shopping-list.reducer';
     RouterModule,
     HttpClientModule,
     SharedModule,
-    StoreModule.forRoot({shoppingList: shoppingListReducer})
+    StoreModule.forRoot(fromApp.appReducer)
   ],
   providers: [LoggingService],
   bootstrap: [AppComponent],
