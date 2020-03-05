@@ -29,7 +29,7 @@ export class AuthEffects {
   @Effect()
   autoLogin = this.actions$.pipe(
     ofType(AuthActions.AUTO_LOGIN),
-    map(() => {
+    switchMap(() => {
       const userData: {
         email: string,
         id: string,
@@ -38,7 +38,7 @@ export class AuthEffects {
       } = JSON.parse(localStorage.getItem('userData'));
 
       if (!userData || !userData._token) {
-        return {type: 'DUMMY'};
+        return of();
       }
 
       const expirationDate = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
