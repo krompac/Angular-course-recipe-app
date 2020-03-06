@@ -11,6 +11,7 @@ import {Router} from '@angular/router';
 import {UserModel} from '../user.model';
 import {Store} from '@ngrx/store';
 import * as fromApp from '../../store/app.reducer';
+import * as RecipeActions from '../../recipe-book/store/recipe.actions';
 
 export interface AuthResponseData {
   kind: string;
@@ -44,7 +45,7 @@ export class AuthEffects {
       const expirationDate = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
       this.autoLogout(expirationDate);
       return of(new AuthActions.AuthSuccess({email: userData.email, userId: userData.id, token: userData._token,
-        expirationDate: new Date(userData._tokenExpirationDate)}));
+        expirationDate: new Date(userData._tokenExpirationDate), redirect: true}));
     })
   );
 
@@ -77,8 +78,10 @@ export class AuthEffects {
       map(resData => {
         const expirationDate = new Date(new Date().getTime() + (+resData.expiresIn * 1000));
         const expirationTime = expirationDate.getTime() - new Date().getTime();
+        this.store.dispatch(new RecipeActions.FetchRecipes());
         this.autoLogout(expirationTime);
-        return new AuthActions.AuthSuccess({email: resData.email, userId: resData.localId, token: resData.idToken, expirationDate: expirationDate})
+        return new AuthActions.AuthSuccess({email: resData.email, userId: resData.localId, token: resData.idToken,
+          expirationDate: expirationDate, redirect: false})
       }),
       catchError( err => {
         let errorMessage = 'An unknown error occurred!';
@@ -106,7 +109,9 @@ export class AuthEffects {
     tap((authData: AuthActions.AuthSuccess) => {
       const user = new UserModel(authData.payload.email, authData.payload.userId, authData.payload.token, authData.payload.expirationDate);
       localStorage.setItem('userData', JSON.stringify(user));
-      this.router.navigate(['/'])
+      if (!authData.payload.redirect) {
+        this.router.navigate(['/'])
+      }
     })
   );
 

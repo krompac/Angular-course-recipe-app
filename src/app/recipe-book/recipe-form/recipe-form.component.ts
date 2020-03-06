@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Recipe} from '../recipe.model';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -8,28 +8,30 @@ import {Store} from '@ngrx/store';
 import * as fromApp from '../../store/app.reducer';
 import * as RecipeActions from '../store/recipe.actions';
 import {map, switchMap} from 'rxjs/operators';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-recipe-form',
   templateUrl: './recipe-form.component.html',
   styleUrls: ['./recipe-form.component.css']
 })
-export class RecipeFormComponent implements OnInit {
+export class RecipeFormComponent implements OnInit, OnDestroy {
   editMode = false;
   recipeToEdit: Recipe;
   imagePath: string;
   editForm: FormGroup;
   selectedRecipeIndex: number = -1;
   numberOfRecipes: number;
+  sub: Subscription;
 
   constructor(private route: ActivatedRoute, private store: Store<fromApp.AppState>,
               private router: Router) { }
 
   ngOnInit() {
-    this.route.params.pipe(map(
+    this.sub = this.route.params.pipe(map(
       (params: Params) => {
         this.selectedRecipeIndex = +params['id'];
-        this.editMode = params['id'] !== undefined;
+        this.editMode = this.selectedRecipeIndex !== undefined && !isNaN(this.selectedRecipeIndex);
 
         this.editForm = new FormGroup({
           name: new FormControl(null, Validators.required),
@@ -108,4 +110,11 @@ export class RecipeFormComponent implements OnInit {
   get ingredientsControls() {
     return (this.editForm.get('ingredients') as FormArray).controls;
   }
+
+  ngOnDestroy(): void {
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
+  }
+
 }

@@ -21,13 +21,15 @@ export function authReducer(state: State = initialState, action: AuthActions.Aut
         ...state,
         authError: null,
         user: user,
-        loading: false
+        loading: false,
+        redirect: true
       };
 
     case AuthActions.LOGOUT:
       return {
         ...state,
-        user: null
+        user: null,
+        redirect: false
       };
 
     case AuthActions.SING_UP:

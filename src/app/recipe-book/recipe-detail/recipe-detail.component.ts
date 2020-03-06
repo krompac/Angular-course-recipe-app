@@ -44,7 +44,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
 
   onRemoveClick() {
     this.store.dispatch(new RecipesActions.DeleteRecipe(this.index));
-    this.router.navigate(['../'], {relativeTo: this.route});
+    this.router.navigate(['recipes']);
   }
 
   ngOnDestroy(): void {
