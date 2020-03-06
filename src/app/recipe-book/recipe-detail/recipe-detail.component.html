@@ -1,43 +1,46 @@
-<div class="row">
-  <div class="col-xs-12">
-    <img src="" alt="" class="img-responsive">
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+<div *ngIf="!isLoading">
+  <div class="row">
+    <div class="col-xs-12">
+      <img src="" alt="" class="img-responsive">
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-xs-12">
-    <h1>{{activeRecipe.name}}</h1>
+  <div class="row">
+    <div class="col-xs-12">
+      <h1>{{activeRecipe.name}}</h1>
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-xs-12">
-    <button class="btn-group btn-primary" appDropdown>
-      <button
-        type="button"
-        class="btn btn-primary dropdown-toggle" >
-        Manage Recipe <span class="caret"></span>
+  <div class="row">
+    <div class="col-xs-12">
+      <button class="btn-group btn-primary" appDropdown>
+        <button
+          type="button"
+          class="btn btn-primary dropdown-toggle" >
+          Manage Recipe <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" >
+          <li><a (click)="addToShoppingList()" style="cursor: pointer" >To Shopping List</a> </li>
+          <li><a (click)="onEditClick()" style="cursor: pointer" >Edit Recipe</a> </li>
+          <li><a (click)="onRemoveClick()" style="cursor: pointer">Delete Recipe</a> </li>
+        </ul>
       </button>
-      <ul class="dropdown-menu" >
-        <li><a (click)="addToShoppingList()" style="cursor: pointer" >To Shopping List</a> </li>
-        <li><a (click)="onEditClick()" style="cursor: pointer" >Edit Recipe</a> </li>
-        <li><a (click)="onRemoveClick()" style="cursor: pointer">Delete Recipe</a> </li>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <img src="{{activeRecipe.imagePath}}" alt = "#" style="max-height: 250px">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      {{activeRecipe.description}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <ul class="list-group">
+        <li *ngFor="let ingredient of activeRecipe.ingredients" class="list-group-item">{{ingredient.name}}: {{ingredient.amount}}</li>
       </ul>
-    </button>
-  </div>
-</div>
-<div class="row">
-  <div class="col-xs-12">
-    <img src="{{activeRecipe.imagePath}}" alt = "#" style="max-height: 250px">
-  </div>
-</div>
-<div class="row">
-  <div class="col-xs-12">
-    {{activeRecipe.description}}
-  </div>
-</div>
-<div class="row">
-  <div class="col-xs-12">
-    <ul class="list-group">
-      <li *ngFor="let ingredient of activeRecipe.ingredients" class="list-group-item">{{ingredient.name}}: {{ingredient.amount}}</li>
-    </ul>
+    </div>
   </div>
 </div>
