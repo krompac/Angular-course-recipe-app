@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Recipe} from '../recipe.model';
 import {RecipeService} from '../../services/recipe.service';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Ingredient} from '../../shared/ingredient.model';
-import {PostService} from '../../post.service';
 
 @Component({
   selector: 'app-recipe-form',
