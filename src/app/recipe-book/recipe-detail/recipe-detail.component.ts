@@ -35,7 +35,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
   }
 
   addToShoppingList() {
-    this.store.dispatch(new ShoppingListActions.AddIngredients(this.activeRecipe.ingredients));
+    this.store.dispatch(ShoppingListActions.addIngredients({ingredients: this.activeRecipe.ingredients}));
   }
 
   onEditClick() {
