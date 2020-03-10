@@ -1,5 +1,6 @@
-import {Action} from '@ngrx/store';
+import {createAction, props} from '@ngrx/store';
 import {Recipe} from '../recipe.model';
+import {Update} from '@ngrx/entity';
 
 export const ADD_RECIPE = '[Recipes] Add Recipe';
 export const EDIT_RECIPE = '[Recipes] Edit Recipe';
@@ -10,36 +11,9 @@ export const STORE_RECIPES = '[Recipes] Store Recipes';
 
 export const FIREBASE_RECIPES_JSON = 'https://course-project-aa436.firebaseio.com/recipes.json';
 
-export class AddRecipe implements Action {
-  readonly type = ADD_RECIPE;
-
-  constructor(public payload: Recipe) {}
-}
-
-export class EditRecipe implements Action {
-  readonly type = EDIT_RECIPE;
-
-  constructor(public payload: {recipe: Recipe, index: number}) {}
-}
-
-export class DeleteRecipe implements Action {
-  readonly type = DELETE_RECIPE;
-
-  constructor(public payload: number) {}
-}
-
-export class SetRecipes implements Action {
-  readonly type = SET_RECIPES;
-
-  constructor(public payload: Recipe[]) {}
-}
-
-export class FetchRecipes implements Action {
-  readonly type = FETCH_RECIPES;
-}
-
-export class StoreRecipes implements Action {
-  readonly type = STORE_RECIPES;
-}
-
-export type RecipeActions = AddRecipe | EditRecipe | DeleteRecipe | SetRecipes | FetchRecipes;
+export const addRecipe = createAction(ADD_RECIPE, props<{recipe: Recipe}>());
+export const editRecipe = createAction(EDIT_RECIPE, props<{recipe: Update<Recipe>}>());
+export const deleteRecipe = createAction(DELETE_RECIPE, props<{id: number}>());
+export const setRecipes = createAction(SET_RECIPES, props<{recipes: Recipe[]}>());
+export const fetchRecipes = createAction(FETCH_RECIPES);
+export const storeRecipes = createAction(STORE_RECIPES);

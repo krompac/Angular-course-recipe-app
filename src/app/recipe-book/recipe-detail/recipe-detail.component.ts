@@ -8,6 +8,7 @@ import {Store} from '@ngrx/store';
 import * as ShoppingListActions from '../../shopping-list/store/shopping-list.actions';
 import * as RecipesActions from '../store/recipe.actions';
 import * as fromApp from '../../store/app.reducer';
+import * as RecipeSelectors from '../store/recipe.selectors';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -27,7 +28,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
       (params: Params) => {
         this.index = +params['id'];
         return this.index;
-      }), switchMap(() => this.store.select('recipes')), map(recipeState => recipeState.recipes))
+      }), switchMap(() => this.store.select(RecipeSelectors.selectAllRecipes)))
       .subscribe(recipes => {
         this.activeRecipe = recipes[this.index];
         this.isLoading = false;
@@ -43,7 +44,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
   }
 
   onRemoveClick() {
-    this.store.dispatch(new RecipesActions.DeleteRecipe(this.index));
+    this.store.dispatch(RecipesActions.deleteRecipe({id: this.activeRecipe.id}));
     this.router.navigate(['recipes']);
   }
 

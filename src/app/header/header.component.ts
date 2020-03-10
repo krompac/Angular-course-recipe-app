@@ -26,11 +26,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onSaveData() {
-    this.store.dispatch(new RecipesActions.StoreRecipes());
+    this.store.dispatch(RecipesActions.storeRecipes());
   }
 
   onFetchData() {
-    this.store.dispatch(new RecipesActions.FetchRecipes());
+    this.store.dispatch(RecipesActions.fetchRecipes());
   }
 
   ngOnDestroy(): void {

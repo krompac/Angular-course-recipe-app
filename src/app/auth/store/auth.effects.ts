@@ -78,7 +78,7 @@ export class AuthEffects {
       map(resData => {
         const expirationDate = new Date(new Date().getTime() + (+resData.expiresIn * 1000));
         const expirationTime = expirationDate.getTime() - new Date().getTime();
-        this.store.dispatch(new RecipeActions.FetchRecipes());
+        this.store.dispatch(RecipeActions.fetchRecipes());
         this.autoLogout(expirationTime);
         return new AuthActions.AuthSuccess({email: resData.email, userId: resData.localId, token: resData.idToken,
           expirationDate: expirationDate, redirect: false})

@@ -7,8 +7,11 @@ import {Store} from '@ngrx/store';
 
 import * as fromApp from '../../store/app.reducer';
 import * as RecipeActions from '../store/recipe.actions';
-import {map, switchMap} from 'rxjs/operators';
+import * as RecipeSelectors from '../store/recipe.selectors';
+
 import {Subscription} from 'rxjs';
+import {Update} from '@ngrx/entity';
+import {map, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-recipe-form',
@@ -34,6 +37,7 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
         this.editMode = this.selectedRecipeIndex !== undefined && !isNaN(this.selectedRecipeIndex);
 
         this.editForm = new FormGroup({
+          id: new FormControl(new Date().getUTCMilliseconds()),
           name: new FormControl(null, Validators.required),
           description: new FormControl(null, Validators.required),
           imagePath: new FormControl('https://icon-library.net/images/add-image-icon-png/add-image-icon-png-14.jpg',
@@ -44,8 +48,7 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
         return params;
       }
     ), switchMap(() =>
-      this.store.select('recipes').pipe(map(state => state.recipes))
-    )).subscribe(recipes => {
+      this.store.select(RecipeSelectors.selectAllRecipes))).subscribe(recipes => {
       if (this.editMode) {
         this.recipeToEdit = recipes[this.selectedRecipeIndex];
         this.populateForm();
@@ -58,7 +61,7 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
   private populateForm() {
     if (this.recipeToEdit.ingredients && this.recipeToEdit.ingredients.length > 0) {
       this.recipeToEdit.ingredients.forEach((value: Ingredient) =>
-        (this.editForm.get('ingredients') as FormArray).push(this.createIngredientFormGroup(value.name, value.amount)));
+        (this.editForm.get('ingredients') as FormArray).push(this.createIngredientFormGroup(value.id, value.name, value.amount)));
     }
 
     if (this.recipeToEdit.imagePath) {
@@ -67,6 +70,7 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
 
     this.editForm.patchValue(
       {
+        id: this.recipeToEdit.id,
         name: this.recipeToEdit.name,
         description: this.recipeToEdit.description,
         imagePath: this.imagePath
@@ -74,8 +78,9 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
     );
   }
 
-  private createIngredientFormGroup(name: string, amount: number) : FormGroup {
+  private createIngredientFormGroup(id: number, name: string, amount: number) : FormGroup {
     return new FormGroup({
+        id: new FormControl(id),
         name: new FormControl(name, Validators.required),
         amount: new FormControl(amount, [Validators.required, Validators.pattern('^[1-9]+[0-9]*')])
       }
@@ -83,14 +88,18 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    const recipe = this.editForm.value;
+    const recipe: Recipe = this.editForm.value;
 
     if (this.editMode) {
-      this.store.dispatch(new RecipeActions.EditRecipe({recipe: recipe, index: this.selectedRecipeIndex}));
+      const recipeEdit: Update<Recipe> = {
+        id: recipe.id,
+        changes: {...recipe}
+      };
+
+      this.store.dispatch(RecipeActions.editRecipe({recipe: recipeEdit}));
       this.onCancel();
     } else {
-      this.store.dispatch(new RecipeActions.AddRecipe(recipe));
-      console.log('i am here');
+      this.store.dispatch(RecipeActions.addRecipe({recipe}));
       this.router.navigate(['../recipes', this.numberOfRecipes]);
     }
   }
@@ -100,7 +109,7 @@ export class RecipeFormComponent implements OnInit, OnDestroy {
   }
 
   onAddIngredient() {
-    (this.editForm.get('ingredients') as FormArray).push(this.createIngredientFormGroup('', 0));
+    (this.editForm.get('ingredients') as FormArray).push(this.createIngredientFormGroup(new Date().getUTCMilliseconds(),'', 0));
   }
 
   onRemoveIngredient(index: number) {

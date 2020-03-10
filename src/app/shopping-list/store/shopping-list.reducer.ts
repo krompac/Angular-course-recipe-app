@@ -14,7 +14,8 @@ const shoppingListReducer = createReducer(initialState,
   on(ShoppingListActions.addIngredient, (state, {ingredient}) => ingredientAdapter.addOne(ingredient, state)),
   on(ShoppingListActions.addIngredients, ((state, {ingredients}) => ingredientAdapter.addAll(ingredients, state))),
   on(ShoppingListActions.deleteIngredient, ((state, {id}) => ingredientAdapter.removeOne(id, state))),
-  on(ShoppingListActions.updateIngredient, (state, {ingredient}) => ingredientAdapter.updateOne(ingredient, state)));
+  on(ShoppingListActions.updateIngredient, (state, {ingredient}) => ingredientAdapter.updateOne(ingredient, state))
+);
 
 export function reducer(state: State, action: Action) {
   return shoppingListReducer(state, action);

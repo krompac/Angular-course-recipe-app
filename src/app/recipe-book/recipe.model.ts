@@ -1,6 +1,7 @@
 import {Ingredient} from '../shared/ingredient.model';
 
 export class Recipe {
+  public id = new Date().getUTCMilliseconds();
   public name: string;
   public description: string;
   public ingredients: Ingredient[];

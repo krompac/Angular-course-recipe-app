@@ -1,48 +1,22 @@
 import {Recipe} from '../recipe.model';
 
 import * as RecipeActions from './recipe.actions';
+import {createEntityAdapter, EntityState} from '@ngrx/entity';
+import {Action, createReducer, on} from '@ngrx/store';
 
-export interface State {
-  recipes: Recipe[];
-}
+export interface State extends EntityState<Recipe>{}
 
-const initialState: State = {
-  recipes: []
-};
+export const recipeAdapter = createEntityAdapter<Recipe>();
 
-export function recipeReducer(state: State = initialState, action: RecipeActions.RecipeActions) {
-  switch (action.type) {
-    case RecipeActions.ADD_RECIPE:
-      return {
-        ...state,
-        recipes: [...state.recipes, action.payload]
-      };
+const initialState: State = recipeAdapter.getInitialState();
 
-    case RecipeActions.EDIT_RECIPE:
-      const recipe = state.recipes[action.payload.index];
-      const updatedRecipe = {...recipe, ...action.payload.recipe};
+const recipeReducer = createReducer(initialState,
+  on(RecipeActions.addRecipe, ((state, {recipe}) => recipeAdapter.addOne(recipe, state))),
+  on(RecipeActions.editRecipe, ((state, {recipe}) => recipeAdapter.updateOne(recipe, state))),
+  on(RecipeActions.deleteRecipe, ((state, {id}) => recipeAdapter.removeOne(id, state))),
+  on(RecipeActions.setRecipes, ((state, {recipes}) => recipeAdapter.addMany(recipes, state)))
+);
 
-      const updatedRecipes = [...state.recipes];
-      updatedRecipes[action.payload.index] = updatedRecipe;
-
-      return  {
-        ...state,
-        recipes: updatedRecipes
-      };
-
-    case RecipeActions.DELETE_RECIPE:
-      return {
-        ...state,
-        recipes: [...state.recipes].filter((value, index) => index !== action.payload)
-      };
-
-    case RecipeActions.SET_RECIPES:
-      return {
-        ...state,
-        recipes: action.payload
-      };
-
-    default:
-      return state;
-  }
+export function reducer(state: State, action: Action) {
+  return recipeReducer(state, action);
 }
